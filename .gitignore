@@ -1,0 +1,118 @@
+############################
+# OS / Editor
+############################
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.log
+
+############################
+# Visual Studio
+############################
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+############################
+# .NET / Build Outputs
+############################
+bin/
+obj/
+out/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.nupkg
+*.snupkg
+
+############################
+# NuGet
+############################
+.nuget/
+packages/
+project.lock.json
+
+############################
+# ASP.NET Core
+############################
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+*.Development.json
+
+############################
+# EF Core
+############################
+Migrations/*.Designer.cs
+Migrations/*.csproj
+
+############################
+# Docker
+############################
+**/docker-data/
+**/volumes/
+*.tar
+
+############################
+# Node / React / Frontend
+############################
+node_modules/
+dist/
+build/
+.cache/
+.vite/
+.eslintcache
+.npmrc
+
+############################
+# Environment files
+############################
+.env
+.env.*
+!.env.example
+
+############################
+# Logs
+############################
+logs/
+*.log
+
+############################
+# Test results
+############################
+TestResults/
+coverage/
+*.coverage
+*.trx
+
+############################
+# Publish / Artifacts
+############################
+publish/
+artifacts/
+
+############################
+# IDE specific
+############################
+.idea/
+*.iml
+
+############################
+# Security
+############################
+*.pfx
+*.key
+*.cer
+*.pem
+
+############################
+# Optional (remove if needed)
+############################
+# Keep local launch settings out of repo
+Properties/launchSettings.json
