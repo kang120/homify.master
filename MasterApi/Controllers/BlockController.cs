@@ -4,6 +4,7 @@ using MasterDatabase.Models;
 using MasterLib.Extensions;
 using MasterLib.Helpers;
 using MasterService.Dtos.Master.Block;
+using MasterService.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,77 +13,45 @@ namespace Auth.Controllers
     [ApiController]
     public class BlockController : ControllerBase
     {
-        private readonly MasterDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly BlockService _blockService;
 
-        public BlockController(MasterDbContext dbContext, IMapper mapper)
+        public BlockController(BlockService blockService)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            _blockService = blockService;
         }
 
         [HttpGet("blocks")]
         public async Task<IActionResult> GetBlocks()
         {
-            var blocks = await _dbContext.Blocks.ToListAsync();
+            var blocks = await _blockService.GetBlocks();
             return Ok(blocks);
         }
 
         [HttpGet("block/{id}")]
         public async Task<IActionResult> GetBlock(long id)
         {
-            var block = await _dbContext.Blocks.FirstOrDefaultAsync(x => x.Id == id);
-            if (block == null)
-            {
-                return BadRequest("Block not found");
-            }
-
+            var block = await _blockService.GetBlock(id);
             return Ok(block);
         }
 
         [HttpPost("block")]
         public async Task<IActionResult> CreateBlock(BlockCreateDto obj)
         {
-            var block = _mapper.Map<Block>(obj);
-
-            _dbContext.Blocks.Add(block);
-            await _dbContext.SaveChangesAsync();
-
-            return Ok("Successfully create new block");
+            var block = await _blockService.CreateBlock(obj);
+            return Ok(block);
         }
 
         [HttpPut("block/{id}")]
         public async Task<IActionResult> UpdateBlock(BlockUpdateDto obj, long id)
         {
-            var block = await _dbContext.Blocks.FirstOrDefaultAsync(x => x.Id == id);
-            if(block == null)
-            {
-                return BadRequest("Block not found");
-            }
-
-            _mapper.Map(obj, block);
-
-            _dbContext.Blocks.Update(block);
-            await _dbContext.SaveChangesAsync();
-
-            return Ok("Successfully update block");
+            var block = await _blockService.UpdateBlock(obj, id);
+            return Ok(block);
         }
 
         [HttpDelete("block/{id}")]
         public async Task<IActionResult> DeleteBlock(long id)
         {
-            var block = await _dbContext.Blocks.FirstOrDefaultAsync(x => x.Id == id);
-            if (block == null)
-            {
-                return BadRequest("Block not found");
-            }
-
-            block.DeletedOn = DateTime.UtcNow;
-            block.DeletedBy = Request.GetUserId();
-
-            _dbContext.Blocks.Update(block);
-            await _dbContext.SaveChangesWithoutAuditAsync();
-
+            await _blockService.DeleteBlock(id);
             return Ok("Successfully delete block");
         }
     }

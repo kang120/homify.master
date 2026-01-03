@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using System;
 using System.Text;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,11 +31,21 @@ builder.Services.AddDbContext<MasterDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
+//Newtonsoft.Json.JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+//{
+//    Formatting = Formatting.None,
+//    NullValueHandling = NullValueHandling.Ignore,
+//    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+//    DateFormatHandling = DateFormatHandling.IsoDateFormat
+//};
+
 builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        //options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddOpenApi();
@@ -42,6 +53,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<BlockService>();
+builder.Services.AddScoped<UnitService>();
 builder.Services.AddScoped<UserContext>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

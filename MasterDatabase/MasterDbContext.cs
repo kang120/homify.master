@@ -3,6 +3,7 @@ using MasterDatabase.Models;
 using MasterLib;
 using MasterLib.Common;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace MasterDatabase
 {
@@ -30,6 +31,19 @@ namespace MasterDatabase
                 .WithOne(ut => ut.User)
                 .HasForeignKey(ut => ut.UserId)
                 .HasPrincipalKey(u => u.UserId);
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(BaseModel).IsAssignableFrom(entityType.ClrType))
+                {
+                    var parameter = Expression.Parameter(entityType.ClrType, "e");
+                    var propertyMethod = Expression.Property(parameter, nameof(BaseModel.DeletedOn));
+                    var compare = Expression.Equal(propertyMethod, Expression.Constant(null, propertyMethod.Type));
+                    var lambda = Expression.Lambda(compare, parameter);
+
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+                }
+            }
         }
 
         public override int SaveChanges()

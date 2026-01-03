@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Dockerfile" />
+  </Folder>
   <Project Path="../MasterLib/MasterLib/MasterLib.csproj" />
   <Project Path="MasterApi/MasterApi.csproj" />
   <Project Path="MasterDatabase/MasterDatabase.csproj" />
