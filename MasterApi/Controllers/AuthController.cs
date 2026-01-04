@@ -51,5 +51,21 @@ namespace Auth.Controllers
 
             return Ok(tokens);
         }
+
+        [HttpPost("auth/logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized();
+            }
+
+            await _authService.LogoutAsync(refreshToken);
+
+            Response.Cookies.Delete("refreshToken");
+
+            return Ok("Successfully logout");
+        }
     }
 }

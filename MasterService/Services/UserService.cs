@@ -29,9 +29,9 @@ namespace MasterService.Services
             return users;
         }
 
-        public async Task<User> GetUser(long id)
+        public async Task<User> GetUser(Guid userId)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserId == userId);
             if (user == null)
             {
                 throw new BadRequestException("User not found");

@@ -25,10 +25,10 @@ namespace Auth.Controllers
             return Ok(users);
         }
 
-        [HttpGet("user/{id}")]
-        public async Task<IActionResult> GetUser(long id)
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetUser(Guid userId)
         {
-            var user = await _userService.GetUser(id);
+            var user = await _userService.GetUser(userId);
             return Ok(user);
         }
 

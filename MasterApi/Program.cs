@@ -24,6 +24,17 @@ builder.Host.UseSerilog((context, services, loggerConfig) =>
         .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName);
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Default", policy =>
+    {
+        policy.WithOrigins("https://localhost:3000") // React dev server
+              .AllowAnyHeader()                     // Allow headers like Content-Type, Authorization
+              .AllowAnyMethod()                     // Allow GET, POST, PUT, DELETE, etc.
+              .AllowCredentials();                  // Allow cookies
+    });
+});
+
 // Database Context
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -53,6 +64,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BlockService>();
 builder.Services.AddScoped<UnitService>();
 builder.Services.AddScoped<UserContext>();
@@ -76,6 +88,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseCors("Default");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // AUTO Database Migrations

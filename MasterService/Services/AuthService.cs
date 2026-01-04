@@ -54,7 +54,8 @@ namespace MasterService.Services
             return new LoginResponseDto
             {
                 AccessToken = accessToken,
-                RefreshToken = refreshToken
+                RefreshToken = refreshToken,
+                UserId = user.UserId
             };
         }
 
@@ -69,20 +70,16 @@ namespace MasterService.Services
             var accessToken = TokenHelper.GenerateJwtToken(dto, _configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], _configuration["Jwt:Key"]);
             var newRefreshToken = TokenHelper.GenerateRefreshToken();
 
-            _dbContext.UserTokens.Add(new UserToken
-            {
-                RefreshToken = newRefreshToken,
-                UserId = token.UserId,
-                ExpiredAt = DateTime.UtcNow.AddDays(7)
-            });
-            _dbContext.UserTokens.Remove(token);
+            token.RefreshToken = newRefreshToken;
+            token.ExpiredAt = DateTime.UtcNow.AddDays(7);
 
             await _dbContext.SaveChangesAsync();
 
             return new LoginResponseDto
             {
                 AccessToken = accessToken,
-                RefreshToken = newRefreshToken
+                RefreshToken = newRefreshToken,
+                UserId = token.UserId
             };
         }
 
